@@ -1,5 +1,5 @@
 {
 	"selector": "source.scss, source.sass",
 	"target": "compile_sass",
-	"cmd": [ "$file" ]
+	"cmd": "$file"
 }
