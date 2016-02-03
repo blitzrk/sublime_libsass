@@ -4,7 +4,7 @@ import sublime_plugin
 import json
 import sass
 from subprocess import PIPE, Popen
-from .pathutils import *
+from pathutils import *
 
 default_opts = {
     "output_dir": "build/css",
@@ -84,7 +84,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
             compiled.append(out_short)
             if err:
                 print(err)
-                sublime.error_message("Failed to compile {0}\nView with Ctrl+`".format(out_short))
+                sublime.error_message("Failed to compile {0}\n\nView error with Ctrl+`".format(out_short))
                 return
 
         sublime.message_dialog("Compiled: {0}".format(",".join(compiled)))
