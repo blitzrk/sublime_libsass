@@ -55,12 +55,6 @@ def partial_import_name(path):
 
 
 class CompileSassCommand(sublime_plugin.WindowCommand):
-    def __init__(self):
-        # Guarantee sassc is executable
-        if not os.access(sass.path, os.X_OK):
-            mode = os.stat(sass.path).st_mode
-            os.chmod(sass.path, mode | stat.S_IEXEC)
-
     def run(self, **build):
         file_path = build['cmd'] # Only select keys have values expanded, hence the bad name
         file_dir = os.path.dirname(file_path)
@@ -74,6 +68,8 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
             root_dir = file_dir
 
         output_dir = opts['output_dir']
+        if not os.path.isabs(output_dir):
+            output_dir = os.path.join(root_dir, output_dir)
         mkdir_p(output_dir)
         flags = to_flags(opts['options'])
 
@@ -100,3 +96,8 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
                 return
 
         sublime.message_dialog("Compiled: {0}".format(",".join(compiled)))
+
+# Guarantee sassc is executable
+if not os.access(sass.path, os.X_OK):
+    mode = os.stat(sass.path).st_mode
+    os.chmod(sass.path, mode | stat.S_IEXEC)
