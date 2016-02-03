@@ -63,6 +63,8 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
             opts = default_opts
             root_dir = file_dir
 
+        output_dir = opts['output_dir']
+        mkdir_p(output_dir)
         flags = to_flags(opts['options'])
 
         compiled = []
@@ -75,7 +77,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
 
         for fname in in_files:
             in_file = os.path.join(root_dir, fname)
-            out_file = os.path.join(root_dir, opts['output_dir'], os.path.splitext(fname)[0]+'.css')
+            out_file = os.path.join(root_dir, output_dir, os.path.splitext(fname)[0]+'.css')
 
             p = Popen([sass.path] + flags + [in_file, out_file], stdout=PIPE, stderr=PIPE)
             out, err = p.communicate()
