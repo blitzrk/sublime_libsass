@@ -1,14 +1,65 @@
 import sublime
 import sublime_plugin
 
+import errno
+from functools import reduce
 import json
 import os
 import os.path
+import re
 import sass
 import stat
 from subprocess import PIPE, Popen
-from pathutils import *
 
+
+def subpaths(path):
+    def append_deeper(acc, name):
+        return acc + [acc[-1] + os.sep + name]
+
+    if path.startswith(os.sep):
+        path = path[1:]
+
+    dirs = path.split(os.sep)
+    if os.path.isfile(path):
+        dirs = dirs[:-1]
+
+    paths = reduce(append_deeper, dirs, [''])[1:]
+    paths.reverse()
+    return paths
+
+
+def grep_r(pattern, start):
+    if not os.path.isdir(start):
+        raise IOError("Not a directory")
+
+    pattern = re.compile(pattern)
+
+    def in_file(path, pattern):
+        found = False
+        with open(path, 'r') as f:
+            for line in f:
+                if pattern.match(line):
+                    found = True
+                    break
+        return found
+
+    files = []
+    for dirpath, _, filenames in os.walk(start):
+        for name in filenames:
+            fpath = os.path.join(dirpath, name)
+            if in_file(fpath, pattern):
+                files.append(os.path.relpath(fpath, start))
+    return files
+
+
+def mkdir_p(path):
+    try:
+        os.makedirs(os.path.abspath(path))
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
 default_opts = {
     "output_dir": "build/css",
@@ -77,7 +128,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         in_files = []
 
         if is_partial(file_path):
-            in_files += grep_r(r"@import\s'{0}'".format(partial_import_name(file_path)), root_dir)
+            in_files += grep_r(r"@import\s+'{0}'".format(partial_import_name(file_path)), root_dir)
         else:
             in_files.append(os.path.relpath(file_path, root_dir))
 
