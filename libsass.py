@@ -147,7 +147,8 @@ def importing_files(file_path, start, files=[], partials=[]):
         
     import_stmt = r"@import\s+'{0}'".format(partial_import_name(file_path))
     for f in grep_r(import_stmt, start):
-        files, partials = importing_files(f, start, files, partials)
+        if f not in files and f not in partials:
+            files, partials = importing_files(f, start, files, partials)
 
     return (files, partials)
 
@@ -178,7 +179,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         flags = to_flags(opts['options'])
 
         compiled = []
-        in_files = importing_files(file_path, root_dir)[0]
+        in_files = importing_files(os.path.relpath(file_path, root_dir), root_dir)[0]
 
         for fname in in_files:
             in_file = os.path.join(root_dir, fname)
