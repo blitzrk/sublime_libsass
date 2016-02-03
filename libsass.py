@@ -133,6 +133,25 @@ def partial_import_name(path):
     return os.path.splitext(os.path.basename(path))[0][1:]
 
 
+def importing_files(file_path, start, files=[], partials=[]):
+    '''
+    Recursively find files importing `partial` in `start` and if any are partials
+    themselves, find those importing them.
+    '''
+
+    if not is_partial(file_path):
+        files.append(file_path)
+        return (files, partials)
+    else:
+        partials.append(file_path)
+        
+    import_stmt = r"@import\s+'{0}'".format(partial_import_name(file_path))
+    for f in grep_r(import_stmt, start):
+        files, partials = importing_files(f, start, files, partials)
+
+    return (files, partials)
+
+
 class CompileSassCommand(sublime_plugin.WindowCommand):
     '''
     WindowCommand `compile_sass` to compile Sass asset and assets importing it
@@ -159,12 +178,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         flags = to_flags(opts['options'])
 
         compiled = []
-        in_files = []
-
-        if is_partial(file_path):
-            in_files += grep_r(r"@import\s+'{0}'".format(partial_import_name(file_path)), root_dir)
-        else:
-            in_files.append(os.path.relpath(file_path, root_dir))
+        in_files = importing_files(file_path, root_dir)[0]
 
         for fname in in_files:
             in_file = os.path.join(root_dir, fname)
@@ -180,3 +194,4 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
                 return
 
         sublime.message_dialog("Compiled: {0}".format(",".join(compiled)))
+        return
