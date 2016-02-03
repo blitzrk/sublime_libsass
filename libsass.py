@@ -2,9 +2,13 @@ import sublime
 import sublime_plugin
 
 import json
+import os
+import os.path
 import sass
+import stat
 from subprocess import PIPE, Popen
 from pathutils import *
+
 
 default_opts = {
     "output_dir": "build/css",
@@ -51,6 +55,12 @@ def partial_import_name(path):
 
 
 class CompileSassCommand(sublime_plugin.WindowCommand):
+    def __init__(self):
+        # Guarantee sassc is executable
+        if not os.access(sass.path, os.X_OK):
+            mode = os.stat(sass.path).st_mode
+            os.chmod(sass.path, mode | stat.S_IEXEC)
+
     def run(self, **build):
         file_path = build['cmd'] # Only select keys have values expanded, hence the bad name
         file_dir = os.path.dirname(file_path)
