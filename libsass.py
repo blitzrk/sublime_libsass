@@ -44,8 +44,6 @@ def grep_r(pattern, start):
     if not os.path.isdir(start):
         raise IOError("Not a directory")
 
-    pattern = re.compile(pattern)
-
     def in_file(path, pattern):
         found = False
         with open(path, 'r') as f:
@@ -130,7 +128,9 @@ def is_partial(path):
 def partial_import_name(path):
     '''Get name of Sass partial file as would be used for @import'''
 
-    return os.path.splitext(os.path.basename(path))[0][1:]
+    dirname, basename = os.path.split(path)
+    name = os.path.splitext(basename)[0][1:]
+    return os.path.join(dirname, name).replace("\\","/")
 
 
 def importing_files(file_path, start, files=[], partials=[]):
@@ -145,7 +145,7 @@ def importing_files(file_path, start, files=[], partials=[]):
     else:
         partials.append(file_path)
         
-    import_stmt = r"@import\s+'{0}'".format(partial_import_name(file_path))
+    import_stmt = re.compile(r"@import\s+'{0}'".format(partial_import_name(file_path)))
     for f in grep_r(import_stmt, start):
         if f not in files and f not in partials:
             files, partials = importing_files(f, start, files, partials)
