@@ -11,8 +11,15 @@ import sass
 import stat
 from subprocess import PIPE, Popen
 
+# Guarantee sassc is executable
+if not os.access(sass.path, os.X_OK):
+    mode = os.stat(sass.path).st_mode
+    os.chmod(sass.path, mode | stat.S_IEXEC)
+
 
 def subpaths(path):
+    '''List of all recursive parents of `path` in distance order'''
+
     def append_deeper(acc, name):
         return acc + [acc[-1] + os.sep + name]
 
@@ -29,6 +36,11 @@ def subpaths(path):
 
 
 def grep_r(pattern, start):
+    '''
+    Search recursively down from `start` for regex `pattern` in
+    files and return list of all matching files relative to `start`
+    '''
+
     if not os.path.isdir(start):
         raise IOError("Not a directory")
 
@@ -53,6 +65,8 @@ def grep_r(pattern, start):
 
 
 def mkdir_p(path):
+    '''Make directory and all subdirectories if they do not exist'''
+
     try:
         os.makedirs(os.path.abspath(path))
     except OSError as exc:
@@ -60,6 +74,7 @@ def mkdir_p(path):
             pass
         else:
             raise
+
 
 default_opts = {
     "output_dir": "build/css",
@@ -72,6 +87,8 @@ default_opts = {
 
 
 def find_opts(top):
+    '''Search up parent tree for libsass config file'''
+
     for path in subpaths(top):
         file = os.path.join(path, '.libsass.json')
         if os.path.isfile(file):
@@ -79,6 +96,11 @@ def find_opts(top):
 
 
 def read_opts(file):
+    '''
+    Read json-formatted config file into map and fill missing values
+    with defaults
+    '''
+
     with open(file, 'r') as f:
         user_opts = json.load(f)
 
@@ -88,6 +110,8 @@ def read_opts(file):
 
 
 def to_flags(options):
+    '''Convert map into list of standard POSIX flags'''
+
     flags = []
     for key, value in options.items():
         if value is True:
@@ -98,16 +122,25 @@ def to_flags(options):
 
 
 def is_partial(path):
+    '''Check if file is a Sass partial'''
+
     return os.path.basename(path).startswith('_')
 
 
 def partial_import_name(path):
+    '''Get name of Sass partial file as would be used for @import'''
+
     return os.path.splitext(os.path.basename(path))[0][1:]
 
 
 class CompileSassCommand(sublime_plugin.WindowCommand):
+    '''
+    WindowCommand `compile_sass` to compile Sass asset and assets importing it
+    For use in a build system
+    '''
+
     def run(self, **build):
-        file_path = build['cmd'] # Only select keys have values expanded, hence the bad name
+        file_path = build['cmd'] # Only certain keys have values expanded, such as cmd
         file_dir = os.path.dirname(file_path)
         opts_path = find_opts(file_dir)
 
@@ -122,6 +155,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         if not os.path.isabs(output_dir):
             output_dir = os.path.join(root_dir, output_dir)
         mkdir_p(output_dir)
+
         flags = to_flags(opts['options'])
 
         compiled = []
@@ -139,16 +173,10 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
             p = Popen([sass.path] + flags + [in_file, out_file], stdout=PIPE, stderr=PIPE)
             out, err = p.communicate()
 
-            out_short = os.path.basename(out_file)
-            compiled.append(out_short)
+            compiled.append(fname)
             if err:
                 print(err)
-                sublime.error_message("Failed to compile {0}\n\nView error with Ctrl+`".format(out_short))
+                sublime.error_message("Failed to compile {0}\n\nView error with Ctrl+`".format(fname))
                 return
 
         sublime.message_dialog("Compiled: {0}".format(",".join(compiled)))
-
-# Guarantee sassc is executable
-if not os.access(sass.path, os.X_OK):
-    mode = os.stat(sass.path).st_mode
-    os.chmod(sass.path, mode | stat.S_IEXEC)
