@@ -77,7 +77,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         in_files = []
 
         if is_partial(file_path):
-            in_files += grep_r("@import.*{0}".format(partial_import_name(file_path)), root_dir)
+            in_files += grep_r(r"@import\s'{0}'".format(partial_import_name(file_path)), root_dir)
         else:
             in_files.append(os.path.relpath(file_path, root_dir))
 
