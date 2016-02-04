@@ -171,7 +171,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
             opts = default_opts
             root_dir = file_dir
 
-        output_dir = opts['output_dir']
+        output_dir = os.path.normpath(opts['output_dir'])
         if not os.path.isabs(output_dir):
             output_dir = os.path.join(root_dir, output_dir)
         mkdir_p(output_dir)
