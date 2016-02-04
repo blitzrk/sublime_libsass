@@ -133,11 +133,16 @@ def partial_import_name(path):
     return os.path.join(dirname, name).replace("\\","/")
 
 
-def importing_files(file_path, start, files=[], partials=[]):
+def importing_files(file_path, start, files=None, partials=None):
     '''
     Recursively find files importing `partial` in `start` and if any are partials
     themselves, find those importing them.
     '''
+
+    if files is None:
+        files = []
+    if partials is None:
+        partials = []
 
     if not is_partial(file_path):
         files.append(file_path)
