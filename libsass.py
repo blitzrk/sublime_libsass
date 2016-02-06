@@ -23,14 +23,15 @@ def subpaths(path):
     def append_deeper(acc, name):
         return acc + [acc[-1] + os.sep + name]
 
-    if path.startswith(os.sep):
-        path = path[1:]
-
-    dirs = path.split(os.sep)
+    drive, dirs = os.path.splitdrive(path)
+    dirs = dirs.split(os.sep)
     if os.path.isfile(path):
         dirs = dirs[:-1]
 
     paths = reduce(append_deeper, dirs, [''])[1:]
+    paths = [d[1:] if d.startswith(os.sep+os.sep) else d for d in paths]
+    paths = [drive + d for d in paths]
+
     paths.reverse()
     return paths
 
