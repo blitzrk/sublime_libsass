@@ -45,14 +45,17 @@ def splitpath(path):
 
 
 def to_flags(options):
-    '''Convert map into list of standard POSIX flags'''
+    '''Convert map into list of standard flags'''
 
     flags = []
     for key, value in options.items():
         if value is True:
             flags.append('--{0}'.format(key))
+        elif type(value) is list:
+            for v in value:
+                flags.append('--{0} {1}'.format(key, v))
         elif value is not False:
-            flags.append('--{0}={1}'.format(key, value))
+            flags.append('--{0} {1}'.format(key, value))
     return flags
 
 
