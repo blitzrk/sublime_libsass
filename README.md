@@ -23,6 +23,8 @@ Flags corresponding to sassc's and a relative output directory may be specified.
 }
 ```
 
+You can edit the config or generate an example by selecting the menu item `Tools`->`Libsass Build`->`Create/Edit Config File`.
+
 ## Usage
 
 Configuration is entirely optional, so in the simplest case, simply build with `Ctrl+Shift+B`. If you have another SASS build system installed, you may need to select libsass in Sublime's menu.
