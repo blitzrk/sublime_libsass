@@ -1,10 +1,11 @@
 import json
 from libsass.pathutils import subpaths, mkdir_p
 import os
+import re
 
 
 default_opts = {
-    "output_dir": "build/css",
+    "output_dir": "{0}".format(os.path.join('build','css')),
     "options": {
         "line-comments": True,
         "line-numbers":  True,
@@ -29,9 +30,13 @@ def read_config(file):
     with defaults
     '''
 
+    lines = []
     with open(file, 'r') as f:
-        user_opts = json.load(f)
+        comment = re.compile("//.*")
+        for line in f:
+            lines.append(re.sub(comment, "", line))
 
+    user_opts = json.loads("\n".join(lines))
     opts = default_opts
     opts.update(user_opts)
     return opts
