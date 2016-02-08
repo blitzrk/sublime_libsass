@@ -1,0 +1,12 @@
+[{
+	"id": "tools",
+	"caption": "Tools",
+	"children": [{
+		"id": "libsass",
+		"caption": "Libsass Build",
+		"children": [{
+			"caption": "Create/Edit Config File",
+			"command": "libsass_build_config"
+		}]
+	}]
+}]

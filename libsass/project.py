@@ -36,7 +36,7 @@ def read_config(file):
         for line in f:
             lines.append(re.sub(comment, "", line))
 
-    user_opts = json.loads("\n".join(lines))
+    user_opts = json.loads("".join(lines))
     opts = default_opts
     opts.update(user_opts)
     return opts
