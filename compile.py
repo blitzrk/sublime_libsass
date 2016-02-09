@@ -27,7 +27,8 @@ def compile_deps(path, out_dir, flags):
         in_file  = os.path.join(root, f)
         out_file = os.path.join(out_dir, os.path.splitext(f)[0]+'.css')
 
-        p = Popen([sass.path] + flags + [in_file, out_file], stdout=PIPE, stderr=PIPE)
+        p = Popen([sass.path] + flags + [in_file, out_file],
+                stdout=PIPE, stderr=PIPE, creationflags=0x00000008)
         out, err = p.communicate()
 
         if err:
