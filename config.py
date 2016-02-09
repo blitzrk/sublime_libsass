@@ -23,7 +23,7 @@ example = r'''{{
         "omit-map-comment": false,  // Bool   | Omit comment about .css.map file in .css file
         "precision": false          // Int    | Decimal places for computed values
     }}
-}}'''.format(os.path.join('build','css'))
+}}'''.format(os.path.join('build','css').replace('\\',r'\\\\'))
 
 
 class LibsassBuildConfigCommand(sublime_plugin.WindowCommand):
