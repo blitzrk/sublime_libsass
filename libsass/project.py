@@ -32,9 +32,12 @@ def read_config(file):
 
     lines = []
     with open(file, 'r') as f:
-        comment = re.compile("//.*")
+        newline = re.compile(r'\r?\n$')
+        comment = re.compile(r"//.*$")
         for line in f:
-            lines.append(re.sub(comment, "", line))
+            line = re.sub(newline, "", line)
+            line = re.sub(comment, "", line)
+            lines.append(line)
 
     user_opts = json.loads("".join(lines))
     opts = default_opts
@@ -58,9 +61,9 @@ def to_flags(options):
             flags.append('--{0}'.format(key))
         elif type(value) is list:
             for v in value:
-                flags.append('--{0} {1}'.format(key, v))
+                flags.append('--{0}={1}'.format(key, v))
         elif value is not False:
-            flags.append('--{0} {1}'.format(key, value))
+            flags.append('--{0}={1}'.format(key, value))
     return flags
 
 
