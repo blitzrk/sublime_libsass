@@ -17,7 +17,10 @@ default_opts = {
 def find_config(top):
     '''Search up parent tree for libsass config file'''
 
-    top = os.path.dirname(os.path.realpath(top))
+    top = os.path.realpath(top)
+    if not os.path.isdir(top):
+        top = os.path.dirname(top)
+
     for path in subpaths(top):
         file = os.path.join(path, '.libsass.json')
         if os.path.isfile(file):
