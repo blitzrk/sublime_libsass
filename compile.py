@@ -7,13 +7,12 @@ import stat
 from subprocess import PIPE, Popen
 
 # Make subpackages importable
-import sys
-if sys.version_info[0] == 3:
-    from .libsass import deps
-    from .libsass import project
-else:
+try:
     from libsass import deps
     from libsass import project
+except ImportError:
+    from .libsass import deps
+    from .libsass import project
 
 
 # Guarantee sassc is executable
