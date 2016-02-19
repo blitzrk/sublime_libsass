@@ -22,6 +22,13 @@ if not os.access(sass.path, os.X_OK):
     os.chmod(sass.path, mode | stat.S_IEXEC)
 
 
+# Platform-specific subprocess options
+if os.name is 'nt':
+    _platform_opts = { 'creationflags': 0x00000008 }
+else:
+    _platform_opts = {}
+
+
 def compile_deps(path, out_dir, flags):
     files, root = deps.get(path)
 
@@ -31,7 +38,7 @@ def compile_deps(path, out_dir, flags):
         out_file = os.path.join(out_dir, os.path.splitext(f)[0]+'.css')
 
         p = Popen([sass.path] + flags + [in_file, out_file],
-                stdout=PIPE, stderr=PIPE, creationflags=0x00000008)
+                stdout=PIPE, stderr=PIPE, **_platform_opts)
         out, err = p.communicate()
 
         if err:
