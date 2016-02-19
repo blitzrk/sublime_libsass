@@ -1,5 +1,5 @@
-from libsass.pathutils import grep_r
-from libsass import project
+from .pathutils import grep_r
+from . import project
 import os
 import re
 

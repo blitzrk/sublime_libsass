@@ -1,5 +1,5 @@
 import json
-from libsass.pathutils import subpaths, mkdir_p
+from .pathutils import subpaths, mkdir_p
 import os
 import re
 
