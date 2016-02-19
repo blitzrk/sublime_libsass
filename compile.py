@@ -8,9 +8,12 @@ from subprocess import PIPE, Popen
 
 # Make subpackages importable
 import sys
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from libsass import deps
-from libsass import project
+if sys.version_info[0] == 3:
+    from .libsass import deps
+    from .libsass import project
+else:
+    from libsass import deps
+    from libsass import project
 
 
 # Guarantee sassc is executable

@@ -5,10 +5,10 @@ import os
 
 # Make subpackages importable
 import sys
-_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(_dir) if _dir not in sys.path else None
-
-from libsass import project
+if sys.version_info[0] == 3:
+    from .libsass import project
+else:
+    from libsass import project
 
 
 example = r'''{{
