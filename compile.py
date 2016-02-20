@@ -61,5 +61,15 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         out_dir, flags = project.config_for(file_path)
         compiled = compile_deps(file_path, out_dir, flags)
         if compiled:
-            sublime.message_dialog("Compiled: {0}".format(",".join(compiled)))
+            self._set_status("Compiled: {0}".format(",".join(compiled)))
+        return
+
+    def _set_status(self, message):
+        view = self.window.active_view()
+        view.set_status('libsass', message)
+        sublime.set_timeout(self._clear_status, 5000)
+        return
+
+    def _clear_status(self):
+        self._set_status('')
         return
