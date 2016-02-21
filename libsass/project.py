@@ -2,8 +2,8 @@ import json
 from .pathutils import subpaths, mkdir_p
 import os
 import re
+import sublime
 
-_settings = ["output_dir", "options"]
 
 def settings():
     return sublime.load_settings("Libsass Build.sublime-settings")
@@ -12,9 +12,15 @@ def settings():
 def user_opts():
     '''Get global config from Default/User Preferences.sublime-settings'''
 
-    opts = {}
-    for key in _settings:
-        opts[key] = settings().get(key)
+    s = settings()
+    opts = {
+        'output_dir': s.get('output_dir'),
+        'options': s.get('options')
+    }
+
+    if os.name is 'nt':
+        opts['output_dir'] = opts['output_dir'].replace('/','\\')
+
     return opts
 
 
