@@ -78,7 +78,10 @@ def read_config(file):
 
 def splitpath(path):
     opts_path = find_config(path)
-    root = os.path.dirname(opts_path or path)
+    if opts_path:
+        root = os.path.dirname(opts_path)
+    else:
+        root = find_root(path)
     rest = os.path.relpath(path, root)
     return (rest, root)
 
