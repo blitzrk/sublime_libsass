@@ -3,15 +3,36 @@ from .pathutils import subpaths, mkdir_p
 import os
 import re
 
+_settings = ["output_dir", "options"]
 
-default_opts = {
-    "output_dir": "{0}".format(os.path.join('build','css')),
-    "options": {
-        "line-comments": True,
-        "line-numbers":  True,
-        "style":         "nested"
-    }
-}
+def user_opts(view):
+    '''Get global config from Default/User Preferences.sublime-settings'''
+
+    opts = {}
+    for key in _settings:
+        opts[key] = view.settings().get(key)
+    return opts
+
+
+def find_root(file):
+    '''
+    For projects without .libsass.json configs, search for the most distant
+    parent directory that still has a .sass or .scss file
+    '''
+
+    def is_sass(file):
+        ext = os.path.splitext(file)[1]
+        return ext in ['.sass', '.scss']
+
+    for i, path in enumerate(subpaths(file)):
+        (_, _, files) = next(os.walk(path))
+        if not any([is_sass(f) for f in files]):
+            break
+
+    assert is_sass(file)
+    assert i > 0
+
+    return subpaths(file)[i-1]
 
 
 def find_config(top):
@@ -42,10 +63,7 @@ def read_config(file):
             line = re.sub(comment, "", line)
             lines.append(line)
 
-    user_opts = json.loads("".join(lines))
-    opts = default_opts
-    opts.update(user_opts)
-    return opts
+    return json.loads("".join(lines))
 
 
 def splitpath(path):
@@ -70,12 +88,17 @@ def to_flags(options):
     return flags
 
 
-def config_for(path):
+def config_for(view, path):
     '''Determine output path and flags for compiling file at `path`'''
 
-    opts_path = find_config(path)
-    root = os.path.dirname(opts_path or path)
-    opts = default_opts if opts_path is None else read_config(opts_path)
+    opts = user_opts(view)
+    config_path = find_config(path)
+
+    if config_path:
+        root = os.path.dirname(config_path)
+        opts.update(read_config(config_path))
+    else:
+        root = find_root(path)
 
     output_dir = os.path.normpath(opts['output_dir'])
     if not os.path.isabs(output_dir):
