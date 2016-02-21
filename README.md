@@ -31,33 +31,32 @@ You have the directory structure:
     +-- main.scss (has @import 'partials/reset';)
 ```
 
-Then use:
+Then you could use:
 
 `.libsass.json`:
 
-```json
+```js
 {
 	"output_dir": "static/css",
 	"options": {
 		"line-comments": true,
 		"line-numbers":  true,
-		"style":         "nested",
-		"load-path":     "/path/to/projects/example/styles"
+		"style":         "nested", // Comments allowed in `.libsass.json`, but not `*.sublime-settings`
+		"load-path":     "/path/to/projects/example/styles" // You DO NOT need this line
 	}
 }
 ```
 
-or alternatively:
+or alternatively in `/path/to/projects/example/styles/.libsass.json`:
 
-`.libsass.json` in `/path/to/projects/example/styles`:
-
-```json
+```js
 {
-	"output_dir": "../static/css",
+	"output_dir": "../static/css", // This path gets normalized, so `..`s get handled
 	"options": {
 		"line-comments": true,
 		"line-numbers":  true,
-		"style":         "nested"
+		"style":         "nested",
+		"load-path":     "/path/to/node_modules/bourbon" // Get your fill of bourbon or point to compass!
 	}
 }
 ```
