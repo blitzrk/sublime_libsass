@@ -10,12 +10,19 @@ def is_partial(path):
     return os.path.basename(path).startswith('_')
 
 
-def partial_import_name(path):
+def partial_import_regex(partial):
     '''Get name of Sass partial file as would be used for @import'''
 
-    dirname, basename = os.path.split(path)
-    name = os.path.splitext(basename)[0][1:]
-    return os.path.join(dirname, name).replace("\\","/")
+    def from_curdir(cwd):
+        relpath = os.path.relpath(partial, cwd)
+        dirname, basename = os.path.split(relpath)
+        name = os.path.splitext(basename)[0][1:]
+        partial_import = os.path.join(dirname, name).replace("\\","/")
+        print(partial_import)
+        import_stmt = re.compile(r"@import\s+'{0}'".format(partial_import))
+        return import_stmt
+
+    return from_curdir
 
 
 def get_rec(file_path, start, files=None, partials=None):
@@ -35,8 +42,8 @@ def get_rec(file_path, start, files=None, partials=None):
     else:
         partials.append(file_path)
 
-    import_stmt = re.compile(r"@import\s+'{0}'".format(partial_import_name(file_path)))
-    for f in grep_r(import_stmt, start):
+    partial_fn = partial_import_regex(os.path.join(start, file_path))
+    for f in grep_r(partial_fn, start):
         if f not in files and f not in partials:
             files, partials = get_rec(f, start, files, partials)
 

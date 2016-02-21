@@ -25,6 +25,17 @@ def user_opts():
 
 
 def find_root(file):
+    '''Find root dir based on config or best guess if no config'''
+
+    config_path = find_config(file)
+    if config_path:
+        root = os.path.dirname(config_path)
+    else:
+        root = guess_root(file)
+    return root
+
+
+def guess_root(file):
     '''
     For projects without .libsass.json configs, search for the most distant
     parent directory that still has a .sass or .scss file
@@ -81,13 +92,8 @@ def read_config(file):
 
 def splitpath(path):
     '''Splits path based on config (guessed root, config location, or load-path)'''
-    
-    # TODO: check config for load-path
-    opts_path = find_config(path)
-    if opts_path:
-        root = os.path.dirname(opts_path)
-    else:
-        root = find_root(path)
+
+    root = find_root(path)
     rest = os.path.relpath(path, root)
     return (rest, root)
 
@@ -112,12 +118,10 @@ def config_for(path):
 
     opts = user_opts()
     config_path = find_config(path)
+    root = find_root(path)
 
     if config_path:
-        root = os.path.dirname(config_path)
         opts.update(read_config(config_path))
-    else:
-        root = find_root(path)
 
     output_dir = os.path.normpath(opts['output_dir'])
     if not os.path.isabs(output_dir):

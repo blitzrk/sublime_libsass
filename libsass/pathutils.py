@@ -21,7 +21,7 @@ def subpaths(path):
     return paths
 
 
-def grep_r(pattern, start):
+def grep_r(pattern_fn, start):
     '''
     Search recursively down from `start` for regex `pattern` in
     files and return list of all matching files relative to `start`
@@ -41,6 +41,7 @@ def grep_r(pattern, start):
 
     files = []
     for dirpath, _, filenames in os.walk(start):
+        pattern = pattern_fn(dirpath)
         for name in filenames:
             fpath = os.path.join(dirpath, name)
             if in_file(fpath, pattern):
