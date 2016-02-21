@@ -58,7 +58,7 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
 
     def run(self, **build):
         file_path = build['cmd'] # Only certain keys have values expanded, such as cmd
-        out_dir, flags = project.config_for(self.window.active_view(), file_path)
+        out_dir, flags = project.config_for(file_path)
         compiled = compile_deps(file_path, out_dir, flags)
         if compiled:
             self._set_status("Compiled: {0}".format(",".join(compiled)))

@@ -5,12 +5,16 @@ import re
 
 _settings = ["output_dir", "options"]
 
-def user_opts(view):
+def settings():
+    return sublime.load_settings("Libsass Build.sublime-settings")
+	
+
+def user_opts():
     '''Get global config from Default/User Preferences.sublime-settings'''
 
     opts = {}
     for key in _settings:
-        opts[key] = view.settings().get(key)
+        opts[key] = settings().get(key)
     return opts
 
 
@@ -88,10 +92,10 @@ def to_flags(options):
     return flags
 
 
-def config_for(view, path):
+def config_for(path):
     '''Determine output path and flags for compiling file at `path`'''
 
-    opts = user_opts(view)
+    opts = user_opts()
     config_path = find_config(path)
 
     if config_path:
