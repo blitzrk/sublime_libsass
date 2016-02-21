@@ -39,6 +39,9 @@ def find_root(file):
         if not any([is_sass(f) for f in files]):
             break
 
+    if not is_sass(file):
+        sublime.error_message("Please save the file")
+
     assert is_sass(file)
     assert i > 0
 
@@ -77,6 +80,9 @@ def read_config(file):
 
 
 def splitpath(path):
+    '''Splits path based on config (guessed root, config location, or load-path)'''
+    
+    # TODO: check config for load-path
     opts_path = find_config(path)
     if opts_path:
         root = os.path.dirname(opts_path)
