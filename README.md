@@ -4,17 +4,56 @@ Build system for SASS/SCSS files in Sublime Text 2/3 with no external dependenci
 
 It uses libsass (via the official sassc front-end) for faster compile times compared to the official Ruby implementation.
 
-https://github.com/blitzrk/sublime-libsass
+https://github.com/blitzrk/sublime_libsass
 
 ## Configuration
 
-Flags corresponding to sassc's and a relative output directory may be specified. Otherwise reasonable defaults will be chosen, but not so reasonable that you shouldn't have a config file for anything more than a proof of concept. The defaults are:
+By default, sassc is given no arguments and css files are put in `build/css` relative to the assumed root of the project (the outermost parent directory containing a sass file from the file being compiled). The default output directory and sassc flags can be modified `Preferences->Package Settings->Libsass Build->Settings - User`. There is a skeleton in `Settings - Default` or see below.
+
+A project-specific configuration can written to `.libsass.json` file. Additionally, the location of this file will make explicit the root of the project as far as where sass imports and the output directory is based. You can edit this config or generate an example by selecting the menu item `Tools`->`Libsass Build`->`Edit Project Config`.
+
+Example:
+
+You have the directory structure:
+
+```
+/path/to/projects/example
+|-- lib/
+|-- static/
+|   |-- js/
+|   |-- css/
+|   |   +-- main.css
+|   +-- images/
+|-- .libsass.json
++-- styles
+    |-- partials
+    |   +-- _reset.scss
+    +-- main.scss (has @import 'partials/reset';)
+```
+
+Then use:
 
 `.libsass.json`:
 
 ```json
 {
-	"output_dir": "build/css",
+	"output_dir": "static/css",
+	"options": {
+		"line-comments": true,
+		"line-numbers":  true,
+		"style":         "nested",
+		"load-path":     "/path/to/projects/example/styles"
+	}
+}
+```
+
+or alternatively:
+
+`.libsass.json` in `/path/to/projects/example/styles`:
+
+```json
+{
+	"output_dir": "../static/css",
 	"options": {
 		"line-comments": true,
 		"line-numbers":  true,
@@ -22,8 +61,6 @@ Flags corresponding to sassc's and a relative output directory may be specified.
 	}
 }
 ```
-
-You can edit the config or generate an example by selecting the menu item `Tools`->`Libsass Build`->`Create/Edit Config File`.
 
 ## Usage
 
@@ -37,4 +74,4 @@ If you have another SASS build system installed, it may be conflicting. If no bu
 
 ### My file compiled, but I don't know where it went!
 
-Libsass looks up the directory structure until it finds (or doesn't find) a `.libsass.json` config file. If you're not using a config file (You really should!) then check that there isn't a config in any parent directory. E.g. if you have your project in `/home/ben/projects/app` and an extraneous config file `/home/ben/projects/.libsass.json`, the css will output relative to `/home/ben/projects` instead of to `/home/ben/projects/app/build/css`.
+Libsass looks up the directory structure until it finds (or doesn't find) a `.libsass.json` config file. If you're not using a config file, then check that there isn't a config in any parent directory. E.g. if you have your project in `/home/ben/projects/app` and an extraneous config file `/home/ben/projects/.libsass.json`, the css will output relative to `/home/ben/projects` instead of to `/home/ben/projects/app/build/css`.
