@@ -36,12 +36,13 @@ def compile_deps(path, out_dir, flags):
         in_file  = os.path.join(root, f)
         out_file = os.path.join(out_dir, os.path.splitext(f)[0]+'.css')
 
-        p = Popen([sass.path] + flags + [in_file, out_file],
-                stdout=PIPE, stderr=PIPE, **_platform_opts)
+        command = [sass.path] + flags + [in_file, out_file]
+        p = Popen(command, stdout=PIPE, stderr=PIPE, **_platform_opts)
         out, err = p.communicate()
 
         if err:
             print(err)
+            print("Command: {0}".format(command))
             sublime.error_message("Failed to compile {0}\n\nView error with Ctrl+`".format(f))
             return
 
