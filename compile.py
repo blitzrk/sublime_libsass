@@ -34,7 +34,7 @@ def compile_deps(path, out_dir, flags):
     compiled = []
     for f in files:
         in_file  = os.path.join(root, f)
-        out_file = os.path.join(out_dir, os.path.splitext(f)[0]+'.css')
+        out_file = os.path.join(out_dir, os.path.basename(os.path.splitext(f)[0]+'.css'))
 
         command = [sass.path] + flags + [in_file, out_file]
         p = Popen(command, stdout=PIPE, stderr=PIPE, **_platform_opts)
