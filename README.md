@@ -17,7 +17,7 @@ Example:
 You have the directory structure:
 
 ```
-/path/to/projects/example
+/path/to/projects/example/
 |-- lib/
 |-- static/
 |   |-- js/
@@ -25,8 +25,8 @@ You have the directory structure:
 |   |   +-- main.css
 |   +-- images/
 |-- .libsass.json
-+-- styles
-    |-- partials
++-- styles/
+    |-- partials/
     |   +-- _reset.scss
     +-- main.scss (has @import 'partials/reset';)
 ```
