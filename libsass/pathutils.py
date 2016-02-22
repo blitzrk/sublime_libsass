@@ -21,16 +21,23 @@ def subpaths(path):
     return paths
 
 
-def grep_r(pattern_fn, start):
+def grep_r(pattern_fn, start, **kwargs):
     '''
     Search recursively down from `start` for regex `pattern` in
     files and return list of all matching files relative to `start`
+
+    `pattern` should be derived from `pattern_fn` by applying the
+    current directory being searched to the 1-arity function
     '''
 
     if not os.path.isdir(start):
         raise IOError("Not a directory")
 
     def in_file(path, pattern):
+        ext = os.path.splitext(path)[1]
+        if kwargs['exts'] and ext not in kwargs['exts']:
+            return False
+
         found = False
         with open(path, 'r') as f:
             for line in f:

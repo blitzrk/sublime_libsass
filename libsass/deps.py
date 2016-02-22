@@ -18,7 +18,6 @@ def partial_import_regex(partial):
         dirname, basename = os.path.split(relpath)
         name = os.path.splitext(basename)[0][1:]
         partial_import = os.path.join(dirname, name).replace("\\","/")
-        print(partial_import)
         import_stmt = re.compile(r"@import\s+'{0}'".format(partial_import))
         return import_stmt
 
@@ -43,7 +42,7 @@ def get_rec(file_path, start, files=None, partials=None):
         partials.append(file_path)
 
     partial_fn = partial_import_regex(os.path.join(start, file_path))
-    for f in grep_r(partial_fn, start):
+    for f in grep_r(partial_fn, start, exts=['.sass','.scss']):
         if f not in files and f not in partials:
             files, partials = get_rec(f, start, files, partials)
 
