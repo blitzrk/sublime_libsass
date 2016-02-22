@@ -59,6 +59,9 @@ def grep_r(pattern_fn, start, **kwargs):
 def mkdir_p(path):
     '''Make directory and all subdirectories if they do not exist'''
 
+    if os.path.exists(path):
+        return
+    
     try:
         os.makedirs(os.path.abspath(path))
     except OSError as exc:
