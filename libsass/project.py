@@ -82,9 +82,13 @@ def read_config(file):
     with open(file, 'r') as f:
         newline = re.compile(r'\r?\n$')
         comment = re.compile(r"//.*$")
+        singlequotebefore = re.compile(r"'(.*?)'\s*:")
+        singlequoteafter = re.compile(r":\s*'(.*?)'")
         for line in f:
             line = re.sub(newline, "", line)
             line = re.sub(comment, "", line)
+            line = re.sub(singlequotebefore, "\"\\1\":", line)
+            line = re.sub(singlequoteafter, ":\"\\1\"", line)
             lines.append(line)
 
     return json.loads("".join(lines))
@@ -118,14 +122,13 @@ def config_for(path):
 
     opts = user_opts()
     config_path = find_config(path)
-    root = find_root(path)
-
     if config_path:
         opts.update(read_config(config_path))
 
     output_dir = os.path.normpath(opts['output_dir'])
     if not os.path.isabs(output_dir):
-        output_dir = os.path.join(root, output_dir)
+        root = find_root(path)
+        output_dir = os.path.normpath(os.path.join(root, output_dir))
 
     # Make sure output folder exists
     mkdir_p(output_dir)
