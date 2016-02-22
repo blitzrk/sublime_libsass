@@ -1,4 +1,4 @@
-# Sublime Libsass
+# Libsass Build
 
 Build system for SASS/SCSS files in Sublime Text 2/3 with no external dependencies
 
