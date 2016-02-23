@@ -115,3 +115,9 @@ If you're not using a config file, then check that there isn't a config in any p
 you have your project in `/home/ben/projects/app` and an extraneous config file 
 `/home/ben/projects/.libsass.json`, the css will output relative to `/home/ben/projects` instead of to
 `/home/ben/projects/app/build/css`.
+
+### My configuration doesn't seem to do anything
+
+In version 0.9.0 the configuration format was changed. Sorry about that, but it was important! And 
+hopefully now the names are less confusing, too. Anyway, check out the examples above. The top-level 
+keys are now "output" and "compile" instead of "output_dir" and "options".
