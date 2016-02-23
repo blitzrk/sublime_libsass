@@ -2,53 +2,32 @@ import sublime
 import sublime_plugin
 
 import os
-import sass
-import stat
-from subprocess import PIPE, Popen
 
 # Make subpackages importable
 try:
     from libsass import deps
+    from libsass import compile
     from libsass import project
 except ImportError:
     from .libsass import deps
+    from .libsass import compile
     from .libsass import project
 
 
-# Guarantee sassc is executable
-if not os.access(sass.path, os.X_OK):
-    mode = os.stat(sass.path).st_mode
-    os.chmod(sass.path, mode | stat.S_IEXEC)
-
-
-# Platform-specific subprocess options
-if os.name is 'nt':
-    _platform_opts = { 'creationflags': 0x00000008 }
-else:
-    _platform_opts = {}
-
-
-def compile_deps(path, out_dir, flags):
+def compile_deps(path, config):
     files, root = deps.get(path)
+    config['root'] = root
 
-    compiled = []
-    for f in files:
-        in_file  = os.path.join(root, f)
-        out_file = os.path.join(out_dir, os.path.basename(os.path.splitext(f)[0]+'.css'))
-
-        command = [sass.path] + flags + [in_file, out_file]
-        p = Popen(command, stdout=PIPE, stderr=PIPE, **_platform_opts)
-        out, err = p.communicate()
-
-        if err:
-            print(err)
-            print("Command: {0}".format(command))
-            sublime.error_message("Failed to compile {0}\n\nView error with Ctrl+`".format(f))
-            return
-
-        compiled.append(f)
-
-    return compiled
+    struct = config["output"]["structure"]
+    if not struct or struct == "nested":
+        return compile.nested(files, config)
+    elif type(struct) is list and len(struct) is 2 and struct[0] == "nested":
+        return compile.nested(files, config, struct[1])
+    elif struct == "flat":
+        return compile.flat(files, config)
+    else:
+        sublime.error_message("Unknown output structure: {0}".format(struct))
+        return
 
 
 class CompileSassCommand(sublime_plugin.WindowCommand):
@@ -59,10 +38,12 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
 
     def run(self, **build):
         file_path = build['cmd'] # Only certain keys have values expanded, such as cmd
-        out_dir, flags = project.config_for(file_path)
-        compiled = compile_deps(file_path, out_dir, flags)
+        config = project.config_for(file_path)
+        compiled = compile_deps(file_path, config)
         if compiled:
             self._set_status("Compiled: {0}".format(",".join(compiled)))
+        else:
+            self._set_status("Error: {0}".format(os.path.basename(file_path)))
         return
 
     def _set_status(self, message):

@@ -11,12 +11,15 @@ except ImportError:
 
 
 example = r'''{{
-    "output_dir": "{0}",
-    "options": {{
+    "output": {{
+        "dir": "{0}",      // Relative or absolute path (can have ..)
+        "structure": "nested"       // "flat", "nested", or ["nested", "relative/root/of/nest"]
+    }},
+    "compile": {{
         "style": false,             // String | Output style: nested/expanded/compact/compressed
         "line-numbers": false,      // Bool   | Emit comments showing original line numbers
         "line-comments": false,     // Bool   | Alias for line-numbers, does not override
-        "load-path": false,         // List   | Sass import paths: e.g. [ 'C:\\bourbon', 'C:\\compass' ]
+        "load-path": false,         // List   | Sass import paths: e.g. [ "C:\\bourbon", "C:\\compass" ]
         "plugin-path": false,       // String | Path to autoload plugins (libsass issue 878)
         "sourcemap": false,         // Bool   | Emit .css.map file for debugging in browser
         "omit-map-comment": false,  // Bool   | Omit comment about .css.map file in .css file

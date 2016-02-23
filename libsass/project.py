@@ -1,5 +1,5 @@
 import json
-from .pathutils import subpaths, mkdir_p
+from .pathutils import subpaths
 import os
 import re
 import sublime
@@ -9,19 +9,19 @@ def settings():
     return sublime.load_settings("Libsass Build.sublime-settings")
 	
 
-def user_opts():
+def user_config():
     '''Get global config from Default/User Preferences.sublime-settings'''
 
     s = settings()
-    opts = {
-        'output_dir': s.get('output_dir'),
-        'options': s.get('options')
+    config = {
+        'output': s.get('output'),
+        'compile': s.get('compile')
     }
 
-    if os.name is 'nt':
-        opts['output_dir'] = opts['output_dir'].replace('/','\\')
+    if os.name == 'nt':
+        config['output']['dir'] = config['output']['dir'].replace('/','\\')
 
-    return opts
+    return config
 
 
 def find_root(file):
@@ -102,37 +102,20 @@ def splitpath(path):
     return (rest, root)
 
 
-def to_flags(options):
-    '''Convert map into list of standard flags'''
-
-    flags = []
-    for key, value in options.items():
-        if value is True:
-            flags.append('--{0}'.format(key))
-        elif type(value) is list:
-            for v in value:
-                flags.append('--{0}={1}'.format(key, v))
-        elif value is not False:
-            flags.append('--{0}={1}'.format(key, value))
-    return flags
-
-
 def config_for(path):
     '''Determine output path and flags for compiling file at `path`'''
 
-    opts = user_opts()
+    config = user_config()
     config_path = find_config(path)
     if config_path:
-        opts.update(read_config(config_path))
+        proj_conf = read_config(config_path)
+        proj_conf['output'] and config['output'].update(proj_conf['output'])
+        proj_conf['compile'] and config['compile'].update(proj_conf['compile'])
 
-    output_dir = os.path.normpath(opts['output_dir'])
+    output_dir = os.path.normpath(config['output']['dir'])
     if not os.path.isabs(output_dir):
         root = find_root(path)
         output_dir = os.path.normpath(os.path.join(root, output_dir))
+    config['output']['dir'] = output_dir
 
-    # Make sure output folder exists
-    mkdir_p(output_dir)
-
-    flags = to_flags(opts['options'])
-
-    return (output_dir, flags)
+    return config

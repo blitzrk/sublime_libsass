@@ -1,6 +1,9 @@
 {
-    "output_dir": "build/css",
-    "options": {
+    "output": {
+        "dir": "build/css",
+        "structure": "nested"
+    },
+    "compile": {
         "style": false,             
         "line-numbers": false,      
         "line-comments": false,     
