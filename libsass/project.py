@@ -5,17 +5,15 @@ import re
 import sublime
 
 
-def settings():
-    return sublime.load_settings("Libsass Build.sublime-settings")
-	
-
 def user_config():
     '''Get global config from Default/User Preferences.sublime-settings'''
 
-    s = settings()
+    settings = sublime.load_settings("Libsass Build.sublime-settings")
+    output = {'dir':'build/css', 'structure':'nested'}
+    output.update(settings.get('output'))
     config = {
-        'output': s.get('output'),
-        'compile': s.get('compile')
+        'output': output,
+        'compile': settings.get('compile')
     }
 
     if os.name == 'nt':
