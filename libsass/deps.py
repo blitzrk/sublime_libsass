@@ -18,7 +18,7 @@ def partial_import_regex(partial):
         dirname, basename = os.path.split(relpath)
         name = os.path.splitext(basename)[0][1:]
         partial_import = os.path.join(dirname, name).replace("\\","/")
-        import_stmt = re.compile(r"@import\s+('|\"){0}('|\")".format(partial_import))
+        import_stmt = re.compile('''@import\s+['"]{0}['"]'''.format(partial_import))
         return import_stmt
 
     return from_curdir
