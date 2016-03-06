@@ -14,6 +14,9 @@ except ImportError:
     from .libsass import project
 
 
+clears = {}
+
+
 def compile_deps(path, config):
     files, root = deps.get(path)
     config['root'] = root
@@ -49,9 +52,19 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
     def _set_status(self, message):
         view = self.window.active_view()
         view.set_status('libsass', message)
+        
+        global clears
+        id = view.id()
+        clears[id] = clears.get(id, 0) + 1
         sublime.set_timeout(self._clear_status, 5000)
         return
 
     def _clear_status(self):
-        self._set_status('')
+        view = self.window.active_view()
+        id = view.id()
+        
+        global clears
+        clears[id] -= 1
+        if clears[id] == 0:
+            view.set_status('libsass', '')
         return
