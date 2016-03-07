@@ -1,5 +1,6 @@
 import errno
 from functools import reduce
+import io
 import os
 
 def subpaths(path):
@@ -39,11 +40,20 @@ def grep_r(pattern_fn, start, **kwargs):
             return False
 
         found = False
-        with open(path, 'r') as f:
-            for line in f:
-                if pattern.match(line):
-                    found = True
-                    break
+        with io.open(path, 'r', encoding="utf-8") as f:
+            try:
+                lineno = 0
+                for line in f:
+                    if pattern.match(line):
+                        found = True
+                        break
+                    lineno += 1
+            except UnicodeError as e:
+                name = os.path.basename(path)
+                print("Cannot read file {0} at line {1}:".format(name, lineno))
+                print(e.object[e.start:e.end])
+                print(e.reason)
+                print("Warning: skipping file {0}".format(path))
         return found
 
     files = []
