@@ -56,15 +56,16 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         global clears
         id = view.id()
         clears[id] = clears.get(id, 0) + 1
-        sublime.set_timeout(self._clear_status, 5000)
+        sublime.set_timeout(self._clear_status(view), 5000)
         return
 
-    def _clear_status(self):
-        view = self.window.active_view()
-        id = view.id()
-        
-        global clears
-        clears[id] -= 1
-        if clears[id] == 0:
-            view.set_status('libsass', '')
-        return
+    def _clear_status(self, view):
+        def clear():
+            id = view.id()
+
+            global clears
+            clears[id] -= 1
+            if clears[id] == 0:
+                view.set_status('libsass', '')
+            return
+        return clear
