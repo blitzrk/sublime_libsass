@@ -3,6 +3,7 @@ from functools import reduce
 import io
 import os
 
+
 def subpaths(path):
     '''List of all recursive parents of `path` in distance order'''
 
@@ -34,6 +35,9 @@ def grep_r(pattern_fn, start, **kwargs):
     if not os.path.isdir(start):
         raise IOError("Not a directory")
 
+    if type(pattern_fn) is str:
+        pattern_fn = lambda x: pattern_fn
+
     def in_file(path, pattern):
         ext = os.path.splitext(path)[1]
         if kwargs['exts'] and ext not in kwargs['exts']:
@@ -64,6 +68,14 @@ def grep_r(pattern_fn, start, **kwargs):
             if in_file(fpath, pattern):
                 files.append(os.path.relpath(fpath, start))
     return files
+
+
+def find_type(root, filetype, exclude=[]):
+    dirs = []
+    for dir, _, files in os.walk(root):
+        if filetype in [os.path.splitext(f)[1] for f in files]:
+            dirs.append(dir)
+    return [dir for dir in dirs if dir not in exclude]
 
 
 def mkdir_p(path):
