@@ -3,23 +3,40 @@ import sublime_plugin
 
 import os
 
-# Make subpackages importable
 try:
     from libsass import deps
     from libsass import compile
+    from libsass import pathutils
     from libsass import project
 except ImportError:
     from .libsass import deps
     from .libsass import compile
+    from .libsass import pathutils
     from .libsass import project
 
 
 clears = {}
 
 
+def autoload_frameworks(config):
+    root = config['root']
+    loadpath = config['compile']['load-path'] or []
+    if type(loadpath) is str:
+        loadpath = [ loadpath ]
+
+    # Find possible frameworks
+    frameworks = pathutils.find_type_dirs(root, ['.sass', '.scss'])
+    print(frameworks)
+
+    config['compile']['load-path'] = loadpath + frameworks
+    return config
+
+
 def compile_deps(path, config):
     files, root = deps.get(path)
     config['root'] = root
+
+    autoload_frameworks(config)
 
     struct = config["output"]["structure"]
     if not struct or struct == "nested":
