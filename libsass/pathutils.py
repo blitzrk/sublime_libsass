@@ -70,7 +70,7 @@ def grep_r(pattern_fn, start, **kwargs):
     return files
 
 
-def find_type_dirs(root, filetypes, exclude=[]):
+def find_type_dirs(root, filetypes):
     if type(filetypes) is str:
         filetypes = (filetypes,)
 
@@ -79,8 +79,7 @@ def find_type_dirs(root, filetypes, exclude=[]):
         if none([dir in path for dir in found]):
             if any([os.path.splitext(f)[1] in filetypes for f in files]):
                 found.append(path)
-
-    return [dir for dir in found if dir not in exclude]
+    return found
 
 
 def mkdir_p(path):

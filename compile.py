@@ -26,7 +26,9 @@ def autoload_frameworks(config):
 
     # Find possible frameworks
     frameworks = pathutils.find_type_dirs(root, ['.sass', '.scss'])
-    print(frameworks)
+    print("Possible frameworks: ", frameworks)
+    frameworks = [ p for p in frameworks if p not in pathutils.subpaths(config['file']) ]
+    print("Without current project: ", frameworks)
 
     config['compile']['load-path'] = loadpath + frameworks
     return config
@@ -35,6 +37,7 @@ def autoload_frameworks(config):
 def compile_deps(path, config):
     files, root = deps.get(path)
     config['root'] = root
+    config['file'] = path
 
     autoload_frameworks(config)
 
