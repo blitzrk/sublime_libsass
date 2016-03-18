@@ -5,7 +5,8 @@ import os
 
 # Make subpackages importable
 try:
-    from libsass import project
+    libsass = __import__("libsass")
+    project = libsass.project
 except ImportError:
     from .libsass import project
 
