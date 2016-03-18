@@ -31,7 +31,8 @@ def autoload_frameworks(config):
     frameworks = [ p for p in frameworks if p not in pathutils.subpaths(config['file']) ]
     print("Without current project: ", frameworks)
 
-    config['compile']['load-path'] = loadpath + frameworks
+    # Not yet implemented
+    # config['compile']['load-path'] = loadpath + frameworks
     return config
 
 

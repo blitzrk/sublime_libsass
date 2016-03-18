@@ -65,7 +65,7 @@ def nested(files, config, rel=""):
     outroot = os.path.join(config['root'], config['output']['dir'])
 
     def outfile_for(infile):
-        if rel and infile.startswith(rel):
+        if rel and infile.startswith(os.path.normpath(rel)):
             infile = infile[len(rel)+1:]
         outname = os.path.splitext(infile)[0]+'.css'
         return os.path.join(outroot, outname)
