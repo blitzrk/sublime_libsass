@@ -76,7 +76,7 @@ def find_type_dirs(root, filetypes):
 
     found = []
     for path, _, files in os.walk(root):
-        if none([dir in path for dir in found]):
+        if not any([dir in path for dir in found]):
             if any([os.path.splitext(f)[1] in filetypes for f in files]):
                 found.append(path)
     return found
