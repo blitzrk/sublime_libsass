@@ -1,4 +1,2 @@
-import compile
-import deps
-import pathutils
-import project
+__all__ = [ 'compile', 'deps', 'pathutils', 'project' ]
+from . import *

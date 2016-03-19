@@ -4,16 +4,14 @@ import sublime_plugin
 import os
 
 try:
-    libsass = __import__("libsass")
-    compile = libsass.compile
-    deps = libsass.deps
-    pathutils = libsass.pathutils
-    project = libsass.project
+    from . import libsass
 except ImportError:
-    from .libsass import deps
-    from .libsass import compile
-    from .libsass import pathutils
-    from .libsass import project
+    import libsass
+
+compile = libsass.compile
+deps = libsass.deps
+pathutils = libsass.pathutils
+project = libsass.project
 
 
 clears = {}

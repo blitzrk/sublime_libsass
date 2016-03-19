@@ -3,12 +3,12 @@ import sublime_plugin
 
 import os
 
-# Make subpackages importable
 try:
-    libsass = __import__("libsass")
-    project = libsass.project
+    from . import libsass
 except ImportError:
-    from .libsass import project
+    import libsass
+
+project = libsass.project
 
 
 example = r'''{{
