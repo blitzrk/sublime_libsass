@@ -5,7 +5,7 @@ import os
 
 try:
     from . import libsass
-except ImportError:
+except ValueError:
     import libsass
 
 project = libsass.project
