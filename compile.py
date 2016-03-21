@@ -1,7 +1,7 @@
 import sublime
 import sublime_plugin
-
 import os
+import threading
 
 try:
     from . import libsass
@@ -61,13 +61,20 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
 
     def run(self, **build):
         file_path = build['cmd'] # Only certain keys have values expanded, such as cmd
-        config = project.config_for(file_path)
-        compiled = compile_deps(file_path, config)
-        if compiled:
-            self._set_status("Compiled: {0}".format(",".join(compiled)))
-        else:
-            self._set_status("Error: {0}".format(os.path.basename(file_path)))
+        thread = CompileThread(file_path, self.callback(file_path))
+        thread.start()
         return
+
+    def callback(self, file_path):
+        # All this to mock currying
+        def cb1(compiled):
+            def cb2():
+                if compiled:
+                    self._set_status("Compiled: {0}".format(",".join(compiled)))
+                else:
+                    self._set_status("Error: {0}".format(os.path.basename(file_path)))
+            return cb2
+        return cb1
 
     def _set_status(self, message):
         view = self.window.active_view()
@@ -89,3 +96,20 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
                 view.set_status('libsass', '')
             return
         return clear
+
+
+class CompileThread(threading.Thread):
+    ''' Compile off the main thread. Only uses sublime.set_timeout for ST2 compatibility'''
+
+    def __init__(self, file, callback):
+        threading.Thread.__init__(self)
+        self.file = file
+        self.callback = callback
+        return
+
+    def run(self):
+        file_path = self.file
+        config = project.config_for(file_path)
+        compiled = compile_deps(file_path, config)
+        sublime.set_timeout(self.callback(compiled), 1)
+        return
