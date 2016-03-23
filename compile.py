@@ -105,7 +105,7 @@ class CompileThread(threading.Thread):
         threading.Thread.__init__(self)
         self.file = file
         self.callback = callback
-        self.config = project.config_for(file_path)
+        self.config = project.config_for(file)
         return
 
     def run(self):
