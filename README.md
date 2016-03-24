@@ -1,7 +1,11 @@
 ![Libsass version][Libsass Badge]
 ![Sassc version][Sassc Badge]
 
-# Libsass Build
+Libsass Build
+===================
+Linux & OSX | Windows
+------------|------------
+[![Build Status][Unix Build]](https://travis-ci.org/blitzrk/sublime_libsass)|?
 
 Build system for Sass/scss files in Sublime Text 2/3 with no external dependencies
 
@@ -125,5 +129,7 @@ In version 0.9.0 the configuration format was changed. Sorry about that, but it 
 hopefully now the names are less confusing, too. Anyway, check out the examples above. The top-level 
 keys are now "output" and "compile" instead of "output_dir" and "options".
 
-[Libsass Badge]: https://img.shields.io/badge/Libsass-3.3.3-brightgreen.svg
-[Sassc Badge]: https://img.shields.io/badge/Sassc-3.3.2-brightgreen.svg
+[Libsass Badge]: https://img.shields.io/badge/libsass-3.3.3-brightgreen.svg
+[Sassc Badge]: https://img.shields.io/badge/sassc-3.3.2-brightgreen.svg
+[Unix Build]: https://travis-ci.org/blitzrk/sublime_libsass.svg?branch=master
+[Windows Build]: https://travis-ci.org/blitzrk/sublime_libsass.svg?branch=master
