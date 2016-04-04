@@ -129,7 +129,14 @@ In version 0.9.0 the configuration format was changed. Sorry about that, but it 
 hopefully now the names are less confusing, too. Anyway, check out the examples above. The top-level 
 keys are now "output" and "compile" instead of "output_dir" and "options".
 
-[Libsass Badge]: https://img.shields.io/badge/libsass-3.3.3-brightgreen.svg
-[Sassc Badge]: https://img.shields.io/badge/sassc-3.3.2-brightgreen.svg
+### Invalid UTF-8
+
+At the moment there are some bugs in Libsass Sublime's unicode support, so if you see a UTF error, you
+likely have a non-ascii character in the path or name of one of your files in your project. For now, the
+best workaround is to just rename your file or directory. This is obviously annoying and it will be
+fixed as soon as possible.
+
+[Libsass Badge]: https://img.shields.io/badge/libsass-3.3.4-brightgreen.svg
+[Sassc Badge]: https://img.shields.io/badge/sassc-3.3.4-brightgreen.svg
 [Unix Build]: https://travis-ci.org/blitzrk/sublime_libsass.svg?branch=master
 [Windows Build]: https://travis-ci.org/blitzrk/sublime_libsass.svg?branch=master
