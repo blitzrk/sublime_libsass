@@ -51,9 +51,9 @@ def _compile(files, config, outfile_for):
         out, err = p.communicate()
 
         if err:
-            print("Error: {0}".format(err))
-            print("Command: {0}".format(" ".join(command)))
-            sublime.error_message("Failed to compile {0}\n\nView error with Ctrl+`".format(f))
+            print(u"Error: {0}".format(err))
+            print(u"Command: {0}".format(" ".join(command)))
+            sublime.error_message(u"Failed to compile {0}\n\nView error with Ctrl+`".format(f))
             return
 
         compiled.append(f)

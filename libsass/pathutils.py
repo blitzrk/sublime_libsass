@@ -54,10 +54,10 @@ def grep_r(pattern_fn, start, **kwargs):
                     lineno += 1
             except UnicodeError as e:
                 name = os.path.basename(path)
-                print("Cannot read file {0} at line {1}:".format(name, lineno))
+                print(u"Cannot read file {0} at line {1}:".format(name, lineno))
                 print(e.object[e.start:e.end])
                 print(e.reason)
-                print("Warning: skipping file {0}".format(path))
+                print(u"Warning: skipping file {0}".format(path))
         return found
 
     files = []
