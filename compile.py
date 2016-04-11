@@ -49,7 +49,7 @@ def compile_deps(path, config):
     elif struct == "flat":
         return compile.flat(files, config)
     else:
-        sublime.error_message("Unknown output structure: {0}".format(struct))
+        sublime.error_message(u"Unknown output structure: {0}".format(struct))
         return
 
 
@@ -70,9 +70,9 @@ class CompileSassCommand(sublime_plugin.WindowCommand):
         def cb1(compiled):
             def cb2():
                 if compiled:
-                    self._set_status("Compiled: {0}".format(",".join(compiled)))
+                    self._set_status(u"Compiled: {0}".format(",".join(compiled)))
                 else:
-                    self._set_status("Error: {0}".format(os.path.basename(file_path)))
+                    self._set_status(u"Error: {0}".format(os.path.basename(file_path)))
             return cb2
         return cb1
 
