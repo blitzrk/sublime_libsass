@@ -12,7 +12,13 @@ else:
     from sublime_libsass.libsass import pathutils
 
 
-class test_pathutils(TestCase):
+class TestPathutils(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(TestPathutils, cls).setUpClass()
+        import time
+        time.sleep(3) # Fix for Python3 async importing? Some race condition.
+
     def test_subpaths(self):
         path = join('/foo','bar','baz')
         exprmt = pathutils.subpaths(path)
