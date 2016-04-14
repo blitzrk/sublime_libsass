@@ -6,18 +6,16 @@ from unittest.mock import patch
 
 version = sublime.version()
 
-if version < '3000':
-    from libsass import pathutils
-else:
-    from sublime_libsass.libsass import pathutils
 
 
 class TestPathutils(TestCase):
     @classmethod
     def setUpClass(cls):
         super(TestPathutils, cls).setUpClass()
-        import time
-        time.sleep(3) # Fix for Python3 async importing? Some race condition.
+        if version < '3000':
+            from libsass import pathutils
+        else:
+            from sublime_libsass.libsass import pathutils
 
     def test_subpaths(self):
         path = join('/foo','bar','baz')
