@@ -6,24 +6,20 @@ from unittest.mock import patch
 
 version = sublime.version()
 
+try:
+    from libsass import pathutils
+except ImportError:
+    from sublime_libsass.libsass import pathutils
 
 
 class TestPathutils(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(TestPathutils, cls).setUpClass()
-        if version < '3000':
-            from libsass import pathutils
-        else:
-            from sublime_libsass.libsass import pathutils
-
     def test_subpaths(self):
         path = join('/foo','bar','baz')
         exprmt = pathutils.subpaths(path)
         expect = [ join('/foo','bar','baz'), join('/foo','bar'), join('/foo'), join('/') ]
         self.assertEqual(exprmt, expect)
 
-    @patch('pathutils.os')
+    @patch('libsass.pathutils.os')
     def test_grep_r(self, mock_os):
         mock_os.walk = lambda x: [('/tmp','',['file.scss'])]
 
