@@ -19,7 +19,7 @@ class TestPathutils(TestCase):
         expect = [ join('/foo','bar','baz'), join('/foo','bar'), join('/foo'), join('/') ]
         self.assertEqual(exprmt, expect)
 
-    @patch('libsass.pathutils.os')
+    @patch.object(pathutils, 'os')
     def test_grep_r(self, mock_os):
         mock_os.walk = lambda x: [('/tmp','',['file.scss'])]
 
