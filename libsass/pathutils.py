@@ -71,15 +71,13 @@ def grep_r(pattern_fn, start, **kwargs):
 
 
 def find_type_dirs(root, filetypes):
+    '''Find all directories below and incl root that contain filetypes'''
     if type(filetypes) is str:
         filetypes = (filetypes,)
 
-    found = []
-    for path, _, files in os.walk(root):
-        if not any([dir in path for dir in found]):
-            if any([os.path.splitext(f)[1] in filetypes for f in files]):
-                found.append(path)
-    return found
+    #TODO: remove duplicates
+    return [path for path, _, files in os.walk(root) 
+            if any([os.path.splitext(f)[1] in filetypes for f in files])]
 
 
 def mkdir_p(path):
