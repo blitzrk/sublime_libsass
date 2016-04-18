@@ -19,9 +19,9 @@ class TestPathutils(TestCase):
         expect = [ join('/foo','bar','baz'), join('/foo','bar'), join('/foo'), join('/') ]
         self.assertEqual(exprmt, expect)
 
-    @patch.object(pathutils, 'os')
-    def test_grep_r(self, mock_os):
-        mock_os.walk = lambda x: [('/tmp','',['file.scss'])]
+    @patch.object(pathutils.os, 'walk')
+    def test_grep_r(self, mock_walk):
+        mock_walk = lambda x: [('/tmp','',['file.scss'])]
 
         self.assertEqual(pathutils.find_type_dirs('anything', '.scss'), ['/tmp'])
         self.assertEqual(pathutils.find_type_dirs('anything', ['.scss', '.sass']), ['/tmp'])
