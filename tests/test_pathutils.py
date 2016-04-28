@@ -2,7 +2,6 @@ from os.path import join
 import sublime
 import sys
 from unittest import TestCase
-from unittest.mock import patch
 
 version = sublime.version()
 
