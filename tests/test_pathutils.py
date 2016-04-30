@@ -1,24 +1,41 @@
-from os.path import join
+from os.path import join, realpath
+import os
 import sublime
 import sys
 from unittest import TestCase
+from functools import wraps
 
-version = sublime.version()
 
-try:
-    from libsass import pathutils
-except ImportError:
-    from sublime_libsass.libsass import pathutils
+def subl_patch(pkg, obj=None):
+    def subl_deco(fn):
+        @wraps(fn)
+        def wrap(*args):
+            nonlocal pkg
+            o = []
+            if obj != None:
+                o += [obj]
+                pkg = pkg + '.' + obj
+            try:
+                mock = __import__(pkg, globals(), locals(), o, 0)
+            except ImportError:
+                pkg = realpath(__file__).split(os.sep)[-3] + '.' + pkg
+                mock = __import__(pkg, globals(), locals(), o, 0)
+            args += (mock,)
+            fn(*args)
+        return wrap
+    return subl_deco
 
 
 class TestPathutils(TestCase):
-    def test_subpaths(self):
+    @subl_patch('libsass', 'pathutils')
+    def test_subpaths(self, pathutils):
         path = join('/foo','bar','baz')
         exprmt = pathutils.subpaths(path)
         expect = [ join('/foo','bar','baz'), join('/foo','bar'), join('/foo'), join('/') ]
         self.assertEqual(exprmt, expect)
 
-    def test_grep_r(self):
+    @subl_patch('libsass', 'pathutils')
+    def test_grep_r(self, pathutils):
         pathutils.os.walk = lambda x: [('/tmp','',['file.scss'])]
 
         self.assertEqual(pathutils.find_type_dirs('anything', '.scss'), ['/tmp'])
