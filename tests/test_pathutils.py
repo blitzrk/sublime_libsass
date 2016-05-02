@@ -1,30 +1,7 @@
-from os.path import join, realpath
-import os
+from os.path import join
+from subl_mock import subl_patch
 import sublime
-import sys
 from unittest import TestCase
-from functools import wraps
-
-
-def subl_patch(pkg, obj=None):
-    def subl_deco(fn):
-        @wraps(fn)
-        def wrap(*args):
-            wrap.pkg = pkg
-            o = []
-            if obj != None:
-                o += [obj]
-                wrap.pkg += '.' + obj
-            try:
-                mock = __import__(wrap.pkg, globals(), locals(), o, 0)
-            except ImportError:
-                wrap.pkg = realpath(__file__).split(os.sep)[-3] + '.' + wrap.pkg
-                mock = __import__(wrap.pkg, globals(), locals(), o, 0)
-            args += (mock,)
-            fn(*args)
-        return wrap
-    return subl_deco
-
 
 class TestPathutils(TestCase):
     @subl_patch('libsass', 'pathutils')
