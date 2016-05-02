@@ -10,16 +10,16 @@ def subl_patch(pkg, obj=None):
     def subl_deco(fn):
         @wraps(fn)
         def wrap(*args):
-            nonlocal pkg
+            wrap.pkg = pkg
             o = []
             if obj != None:
                 o += [obj]
-                pkg = pkg + '.' + obj
+                wrap.pkg += '.' + obj
             try:
-                mock = __import__(pkg, globals(), locals(), o, 0)
+                mock = __import__(wrap.pkg, globals(), locals(), o, 0)
             except ImportError:
-                pkg = realpath(__file__).split(os.sep)[-3] + '.' + pkg
-                mock = __import__(pkg, globals(), locals(), o, 0)
+                wrap.pkg = realpath(__file__).split(os.sep)[-3] + '.' + wrap.pkg
+                mock = __import__(wrap.pkg, globals(), locals(), o, 0)
             args += (mock,)
             fn(*args)
         return wrap
