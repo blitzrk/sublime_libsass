@@ -4,15 +4,9 @@ import os
 import threading
 
 try:
-    from . import libsass
+    from .lib import compile, deps, pathutils, project
 except ValueError:
-    import libsass
-
-compile = libsass.compile
-deps = libsass.deps
-pathutils = libsass.pathutils
-project = libsass.project
-
+    from lib import compile, deps, pathutils, project
 
 clears = {}
 

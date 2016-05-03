@@ -4,11 +4,9 @@ import sublime_plugin
 import os
 
 try:
-    from . import libsass
+    from .lib import project
 except ValueError:
-    import libsass
-
-project = libsass.project
+    from lib import project
 
 
 example = r'''{{
