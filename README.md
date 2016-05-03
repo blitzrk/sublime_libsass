@@ -136,7 +136,7 @@ likely have a non-ascii character in the path or name of one of your files in yo
 best workaround is to just rename your file or directory. This is obviously annoying and it will be
 fixed as soon as possible.
 
-[Libsass Badge]: https://img.shields.io/badge/libsass-3.3.4-brightgreen.svg
-[Sassc Badge]: https://img.shields.io/badge/sassc-3.3.4-brightgreen.svg
+[Libsass Badge]: https://img.shields.io/badge/libsass-3.3.6-brightgreen.svg
+[Sassc Badge]: https://img.shields.io/badge/sassc-3.3.6-brightgreen.svg
 [Unix Build]: https://travis-ci.org/blitzrk/sublime_libsass.svg?branch=master
 [Windows Build]: https://travis-ci.org/blitzrk/sublime_libsass.svg?branch=master
